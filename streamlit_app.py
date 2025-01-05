@@ -6,6 +6,17 @@ import streamlit as st
 import matplotlib.pyplot as plt
 
 
+# Carregar variáveis de ambiente do arquivo .env
+load_dotenv(dotenv_path='/workspaces/sdpp_exec_orc/chave.env')
+
+# Acessar a variável de ambiente
+api_key = os.getenv('CHAVE_API_PORTAL')
+
+if api_key:
+    print('Chave da API carregada com sucesso.')
+else:
+    print('Erro: Chave da API não encontrada no arquivo .env.')
+
 # Exibir o diretório atual de trabalho
 print(f"Diretório atual de trabalho: {os.getcwd()}")
 
