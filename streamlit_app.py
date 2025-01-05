@@ -22,6 +22,9 @@ else:
     st.error('Erro: Chave da API não encontrada na variável de ambiente.')
 
 # Função para obter o código do órgão com base no nome
+orgaos = carregar_dados_excel(caminho_arquivo)
+
+
 def obter_codigo(orgao_nome):
     return orgaos.get(orgao_nome, "Órgão não encontrado")
 
