@@ -70,9 +70,14 @@ def main():
 
     # Exibir os dados se a resposta for válida
     if data:
-        df = pd.DataFrame(data)
-        st.write("Dados Recuperados:")
-        st.dataframe(df)
+        # Filtrar os dados para incluir apenas os registros com o código do órgão 52111
+        filtered_data = [item for item in data if item.get('codigoOrgao') == orgao_code]
+        if filtered_data:
+            df = pd.DataFrame(filtered_data)
+            st.write("Dados Recuperados:")
+            st.dataframe(df)
+        else:
+            st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code}.")
     else:
         st.warning("Nenhum dado encontrado ou erro na requisição.")
 
