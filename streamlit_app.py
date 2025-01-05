@@ -1,6 +1,5 @@
 import requests
 import pandas as pd
-import os
 import streamlit as st
 import matplotlib.pyplot as plt
 
@@ -94,20 +93,25 @@ def main():
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
 
-            # Plotar o gráfico
+            # Plotar o gráfico de barras empilhadas
             fig, ax = plt.subplots(figsize=(10, 6))
             df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
-
-            # Adicionar linha de tendência
-            df_grouped['total'] = df_grouped[['empenhado', 'liquidado', 'pago']].sum(axis=1)
-            ax.plot(df_grouped['ano'], df_grouped['total'], color='black', marker='o', linestyle='-', linewidth=2, label='Total Acumulado')
-
-            # Adicionar legenda
-            ax.legend(title='Categorias de Despesa')
-
             ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 9} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
+            ax.legend(title='Categorias de Despesa')
+            st.pyplot(fig)
+
+            # Calcular o total acumulado
+            df_grouped['total'] = df_grouped[['empenhado', 'liquidado', 'pago']].sum(axis=1)
+
+            # Plotar o gráfico de linha para o total acumulado
+            fig, ax = plt.subplots(figsize=(10, 6))
+            ax.plot(df_grouped['ano'], df_grouped['total'], marker='o', color='black', linestyle='-', linewidth=2, label='Total Acumulado')
+            ax.set_title(f"Total Acumulado de Despesas: {orgao_code} ({year - 9} a {year})")
+            ax.set_xlabel("Ano")
+            ax.set_ylabel("Valor (R$)")
+            ax.legend()
             st.pyplot(fig)
         else:
             st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code}.")
