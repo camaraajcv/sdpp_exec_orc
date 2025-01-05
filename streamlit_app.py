@@ -71,8 +71,8 @@ else:
 if st.button("Buscar Dados"):
     with st.spinner("Buscando dados..."):
         # Preparar filtros
-        # Adicionando o filtro 'empenhado' com valor vazio para passar o filtro mínimo exigido pela API
-        filters = {"codigoOrgao": codigo_orgao, "empenhado": ""}
+        # Alteramos o filtro 'empenhado' para passar um valor específico ("true")
+        filters = {"codigoOrgao": codigo_orgao, "empenhado": "true"}
 
         data = fetch_data(year, headers, filters)
 
