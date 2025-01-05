@@ -26,11 +26,7 @@ def fetch_data(year, orgao_code, orgao_superior_code, page=1, api_key=None):
     }
 
     # Realiza a requisição
-    st.write(f"Fazendo requisição para a URL: {url}")  # Diagnóstico no Streamlit
     response = requests.get(url, headers=headers)
-    
-    # Exibe a URL da requisição e a resposta para diagnóstico
-    st.write(f"Resposta da API: {response.status_code}")
     
     # Verificar o status da resposta
     if response.status_code == 200:
@@ -40,20 +36,26 @@ def fetch_data(year, orgao_code, orgao_superior_code, page=1, api_key=None):
         st.write(f"Erro na requisição: {response.text}")
         return None
 
-# Configurações e parâmetros
-year = 2024
-orgao_code = "52111"  # Exemplo de código do órgão
-orgao_superior_code = "52000"  # Código do órgão superior
-page = 1
+# Função principal do Streamlit
+def main():
+    # Título da aplicação
+    st.title("Consulta de Despesas por Órgão")
 
-# Carregar a chave da API do arquivo .env
-api_key = os.getenv("CHAVE_API_PORTAL")
+    # Carregar a chave da API do arquivo .env
+    api_key = os.getenv("CHAVE_API_PORTAL")
 
-# Verificar se a chave foi carregada corretamente
-if not api_key:
-    st.error("Erro: Chave da API não encontrada no arquivo .env.")
-else:
-    st.write(f"Chave da API carregada: {api_key}")  # Diagnóstico no Streamlit
+    # Verificar se a chave foi carregada corretamente
+    if not api_key:
+        st.error("Erro: Chave da API não encontrada no arquivo .env.")
+        return
+
+    # Parâmetros fixos
+    orgao_code = "52111"  # Código do órgão
+    orgao_superior_code = "52000"  # Código do órgão superior
+    page = 1  # Página inicial
+
+    # Criar um seletor para o ano
+    year = st.selectbox("Escolha o ano", [2024, 2023, 2022, 2021])
 
     # Buscar dados usando a função fetch_data
     data = fetch_data(year, orgao_code, orgao_superior_code, page, api_key)
@@ -65,3 +67,7 @@ else:
         st.dataframe(df)
     else:
         st.warning("Nenhum dado encontrado ou erro na requisição.")
+
+# Rodar a aplicação Streamlit
+if __name__ == "__main__":
+    main()
