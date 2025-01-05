@@ -6,7 +6,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 
 # Carregar variáveis de ambiente do arquivo .env
-load_dotenv(dotenv_path="/workspaces/sdpp_exec_orc/chave.env")
+load_dotenv(dotenv_path="chave.env")
 
 # Função para buscar dados da API
 def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
