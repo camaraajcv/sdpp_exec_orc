@@ -8,20 +8,26 @@ from dotenv import load_dotenv
 load_dotenv(dotenv_path="chave.env")
 
 # Função para buscar dados da API
-def fetch_data(year, headers):
-    url_base = "https://api.portaldatransparencia.gov.br/api-de-dados/despesas/por-funcional-programatica/movimentacao-liquida"
+def fetch_data(year, headers, filters):
+    url_base = "https://api.portaldatransparencia.gov.br/api-de-dados/despesas/por-orgao"
     page = 1
     data = []
 
     while True:
-        url = f"{url_base}?ano={year}&pagina={page}"
+        # Construir a URL com os filtros adicionais
+        params = f"ano={year}&pagina={page}"
+        for key, value in filters.items():
+            if value:
+                params += f"&{key}={value}"
+
+        url = f"{url_base}?{params}"
         response = requests.get(url, headers=headers)
-        
+
         if response.status_code != 200:
             st.error(f"Erro ao buscar dados: {response.status_code}")
             st.write(response.text)  # Diagnóstico do erro
             break
-        
+
         page_data = response.json()
         if not page_data:  # Se não houver mais dados, interrompa
             break
@@ -33,10 +39,13 @@ def fetch_data(year, headers):
 
 # Configuração do Streamlit
 st.title("Consulta ao Portal da Transparência")
-st.write("Consulte as despesas por funcional programática do Portal da Transparência.")
+st.write("Consulte as despesas por órgão do Portal da Transparência.")
 
 # Entradas do usuário
 year = st.number_input("Ano", min_value=2000, max_value=2025, value=2024, step=1)
+
+# Seleção de filtros adicionais
+codigo_orgao = st.text_input("Código do Órgão (opcional)")
 
 # Recuperar a chave da API do arquivo .env
 api_key = os.getenv("CHAVE_API_PORTAL")
@@ -52,13 +61,21 @@ else:
 # Executar a consulta
 if st.button("Buscar Dados"):
     with st.spinner("Buscando dados..."):
-        data = fetch_data(year, headers)
-    
+        # Preparar filtros
+        filters = {
+            "codigoOrgao": codigo_orgao
+        }
+
+        # Filtrar apenas os valores preenchidos
+        filters = {k: v for k, v in filters.items() if v}
+
+        data = fetch_data(year, headers, filters)
+
     if data:
         st.success(f"Dados recuperados com sucesso! Total de registros: {len(data)}")
         df = pd.DataFrame(data)
         st.dataframe(df)
-        
+
         # Opção de baixar os dados como CSV
         csv = df.to_csv(index=False)
         st.download_button("Baixar Dados em CSV", csv, "dados.csv")
