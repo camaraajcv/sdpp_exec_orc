@@ -96,10 +96,18 @@ def main():
 
             # Plotar o gráfico
             fig, ax = plt.subplots(figsize=(10, 6))
-            df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
+            df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax, labels=['Empenhado', 'Liquidado', 'Pago'])
+
+            # Adicionar valores nos rótulos
+            for p in ax.patches:
+                ax.annotate(f'{p.get_height():,.2f}', (p.get_x() + p.get_width() / 2., p.get_height() + 0.01),
+                            ha='center', va='center', fontsize=10, color='black', xytext=(0, 5),
+                            textcoords='offset points')
+
             ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 4} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
+            ax.legend(title='Categorias', labels=['Empenhado', 'Liquidado', 'Pago'])
             st.pyplot(fig)
         else:
             st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code}.")
