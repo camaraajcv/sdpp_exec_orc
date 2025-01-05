@@ -2,6 +2,10 @@ import requests
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
+import locale
+
+# Definir a localidade para o Brasil
+locale.setlocale(locale.LC_ALL, 'pt_BR.UTF-8')
 
 # Acessar a variável de ambiente
 api_key = st.secrets["general"]["CHAVE_API_PORTAL"]
@@ -92,7 +96,8 @@ def main():
 
             # Adicionar rótulos de dados
             for p in ax.patches:
-                ax.annotate(f'{p.get_height():,.2f}', (p.get_x() + p.get_width() / 2., p.get_height() + p.get_y()),
+                ax.annotate(f'{locale.currency(p.get_height(), grouping=True)}', 
+                            (p.get_x() + p.get_width() / 2., p.get_height() + p.get_y()),
                             ha='center', va='center', fontsize=10, color='black', xytext=(0, 5),
                             textcoords='offset points')
 
