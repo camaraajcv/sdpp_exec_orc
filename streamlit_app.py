@@ -51,6 +51,13 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
 
     return all_data
 
+# Função para limpar e converter colunas para numérico
+def clean_and_convert(df):
+    # Substituir vírgulas por pontos e converter para float
+    for col in ['empenhado', 'liquidado', 'pago']:
+        df[col] = df[col].str.replace('.', '').str.replace(',', '.').astype(float)
+    return df
+
 # Função principal do Streamlit
 def main():
     # Título da aplicação
@@ -80,13 +87,12 @@ def main():
             df = pd.DataFrame(filtered_data)
             df_grouped = df.groupby('ano')[['empenhado', 'liquidado', 'pago']].sum().reset_index()
 
+            # Limpar e converter as colunas para numérico
+            df_grouped = clean_and_convert(df_grouped)
+
             # Exibir o DataFrame para diagnóstico
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
-
-            # Remover pontos e substituir vírgulas por pontos nas colunas numéricas
-            for col in ['empenhado', 'liquidado', 'pago']:
-                df_grouped[col] = df_grouped[col].replace({'.': '', ',': '.'}, regex=True).astype(float)
 
             # Plotar o gráfico
             fig, ax = plt.subplots(figsize=(10, 6))
