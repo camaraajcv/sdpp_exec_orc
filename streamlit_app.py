@@ -8,7 +8,7 @@ import streamlit as st
 load_dotenv(dotenv_path="chave.env")
 
 # Função para buscar dados da API
-def fetch_data(year, orgao_code, page=1, api_key=None):
+def fetch_data(year, orgao_code, orgao_superior_code, page=1, api_key=None):
     url_base = "https://api.portaldatransparencia.gov.br/api-de-dados/despesas/por-orgao"
     
     # Verificar se a chave da API está presente
@@ -17,7 +17,7 @@ def fetch_data(year, orgao_code, page=1, api_key=None):
         return None
     
     # Construir a URL com os parâmetros
-    url = f"{url_base}?ano={year}&pagina={page}&codigoOrgao={orgao_code}"
+    url = f"{url_base}?ano={year}&pagina={page}&codigoOrgao={orgao_code}&orgaoSuperior={orgao_superior_code}"
     
     # Cabeçalhos da requisição, incluindo a chave da API
     headers = {
@@ -43,6 +43,7 @@ def fetch_data(year, orgao_code, page=1, api_key=None):
 # Configurações e parâmetros
 year = 2024
 orgao_code = "52111"  # Exemplo de código do órgão
+orgao_superior_code = "52000"  # Código do órgão superior
 page = 1
 
 # Carregar a chave da API do arquivo .env
@@ -55,7 +56,7 @@ else:
     st.write(f"Chave da API carregada: {api_key}")  # Diagnóstico no Streamlit
 
     # Buscar dados usando a função fetch_data
-    data = fetch_data(year, orgao_code, page, api_key)
+    data = fetch_data(year, orgao_code, orgao_superior_code, page, api_key)
 
     # Exibir os dados se a resposta for válida
     if data:
