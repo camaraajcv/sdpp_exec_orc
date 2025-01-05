@@ -22,7 +22,7 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
         st.error("Erro: A chave da API não foi fornecida.")
         return None
 
-    for y in range(year - 4, year + 1):
+    for y in range(year - 9, year + 1):
         page = 1
         while True:
             # Construir a URL com os parâmetros
