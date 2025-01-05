@@ -8,7 +8,7 @@ caminho_arquivo='arquivos/lista-de-orgaos.xls'
 # Função para ler os dados do Excel e criar o dicionário
 def carregar_dados_excel(caminho_arquivo):
     # Carregar a planilha Excel
-    df = pd.read_excel(caminho_arquivo)
+    df = pd.read_excel(caminho_arquivo,engine='openpyxl')
 
     # Criar um dicionário com o nome do órgão como chave e o código como valor
     orgaos = dict(zip(df['nome_do_orgao'], df['orgao_codigo']))
