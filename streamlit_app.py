@@ -5,6 +5,16 @@ from dotenv import load_dotenv
 import streamlit as st
 import matplotlib.pyplot as plt
 
+import os
+
+# Exibir o diretório atual de trabalho
+print(f"Diretório atual de trabalho: {os.getcwd()}")
+
+# Listar arquivos no diretório atual
+print("Arquivos no diretório atual:")
+for file in os.listdir(os.getcwd()):
+    print(file)
+
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv(dotenv_path="chave.env")
 
