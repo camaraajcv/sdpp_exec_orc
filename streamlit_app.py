@@ -146,7 +146,7 @@ def main():
             ax.legend()
             st.pyplot(fig)
         else:
-            st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code}.")
+            st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code} e orgao superior {orgao_superior_code}.")
     else:
         st.warning("Nenhum dado encontrado ou erro na requisição.")
 
