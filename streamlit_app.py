@@ -8,33 +8,42 @@ import streamlit as st
 load_dotenv(dotenv_path="chave.env")
 
 # Função para buscar dados da API
-def fetch_data(year, orgao_code, orgao_superior_code, page=1, api_key=None):
+def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
     url_base = "https://api.portaldatransparencia.gov.br/api-de-dados/despesas/por-orgao"
-    
+    page = 1
+    all_data = []
+
     # Verificar se a chave da API está presente
     if not api_key:
         st.error("Erro: A chave da API não foi fornecida.")
         return None
-    
-    # Construir a URL com os parâmetros
-    url = f"{url_base}?ano={year}&pagina={page}&codigoOrgao={orgao_code}&orgaoSuperior={orgao_superior_code}"
-    
-    # Cabeçalhos da requisição, incluindo a chave da API
-    headers = {
-        "accept": "*/*",
-        "chave-api-dados": api_key  # Passando a chave da API no cabeçalho
-    }
 
-    # Realiza a requisição
-    response = requests.get(url, headers=headers)
-    
-    # Verificar o status da resposta
-    if response.status_code == 200:
-        data = response.json()
-        return data
-    else:
-        st.write(f"Erro na requisição: {response.text}")
-        return None
+    while True:
+        # Construir a URL com os parâmetros
+        url = f"{url_base}?ano={year}&pagina={page}&codigoOrgao={orgao_code}&orgaoSuperior={orgao_superior_code}"
+
+        # Cabeçalhos da requisição, incluindo a chave da API
+        headers = {
+            "accept": "*/*",
+            "chave-api-dados": api_key  # Passando a chave da API no cabeçalho
+        }
+
+        # Realiza a requisição
+        response = requests.get(url, headers=headers)
+
+        # Verificar o status da resposta
+        if response.status_code == 200:
+            data = response.json()
+            if data:
+                all_data.extend(data)
+                page += 1
+            else:
+                break  # Não há mais dados, sai do loop
+        else:
+            st.write(f"Erro na requisição: {response.text}")
+            break  # Em caso de erro, sai do loop
+
+    return all_data
 
 # Função principal do Streamlit
 def main():
@@ -52,13 +61,12 @@ def main():
     # Parâmetros fixos
     orgao_code = "52111"  # Código do órgão
     orgao_superior_code = "52000"  # Código do órgão superior
-    page = 1  # Página inicial
 
     # Criar um seletor para o ano
     year = st.selectbox("Escolha o ano", [2024, 2023, 2022, 2021])
 
     # Buscar dados usando a função fetch_data
-    data = fetch_data(year, orgao_code, orgao_superior_code, page, api_key)
+    data = fetch_data(year, orgao_code, orgao_superior_code, api_key)
 
     # Exibir os dados se a resposta for válida
     if data:
