@@ -98,14 +98,12 @@ def main():
             fig, ax = plt.subplots(figsize=(10, 6))
             df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
 
-            # Adicionar legendas
-            ax.legend(title='Categorias de Despesa')
+            # Adicionar linha de tendência
+            df_grouped['total'] = df_grouped[['empenhado', 'liquidado', 'pago']].sum(axis=1)
+            ax.plot(df_grouped['ano'], df_grouped['total'], color='black', marker='o', linestyle='-', linewidth=2, label='Total Acumulado')
 
-            # Adicionar valores nos rótulos
-            for p in ax.patches:
-                ax.annotate(f'{p.get_height():,.2f}', (p.get_x() + p.get_width() / 2., p.get_height()),
-                            ha='center', va='center', fontsize=10, color='white', xytext=(0, 5),
-                            textcoords='offset points')
+            # Adicionar legenda
+            ax.legend(title='Categorias de Despesa')
 
             ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 4} a {year})")
             ax.set_xlabel("Ano")
