@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 
 
 # Carregar variáveis de ambiente do arquivo .env
-load_dotenv()
 
 # Acessar a variável de ambiente
 api_key = os.getenv('CHAVE_API_PORTAL')
