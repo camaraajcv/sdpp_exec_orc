@@ -1,12 +1,8 @@
 import requests
 import pandas as pd
 import os
-from dotenv import load_dotenv
 import streamlit as st
 import matplotlib.pyplot as plt
-
-
-# Carregar variáveis de ambiente do arquivo .env
 
 # Acessar a variável de ambiente
 api_key = os.getenv('CHAVE_API_PORTAL')
@@ -14,18 +10,7 @@ api_key = os.getenv('CHAVE_API_PORTAL')
 if api_key:
     print('Chave da API carregada com sucesso.')
 else:
-    print('Erro: Chave da API não encontrada no arquivo .env.')
-
-# Exibir o diretório atual de trabalho
-print(f"Diretório atual de trabalho: {os.getcwd()}")
-
-# Listar arquivos no diretório atual
-print("Arquivos no diretório atual:")
-for file in os.listdir(os.getcwd()):
-    print(file)
-
-# Carregar variáveis de ambiente do arquivo .env
-load_dotenv(dotenv_path="chave.env")
+    print('Erro: Chave da API não encontrada na variável de ambiente.')
 
 # Função para buscar dados da API
 def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
@@ -71,15 +56,9 @@ def main():
     # Título da aplicação
     st.title("Consulta de Despesas por Órgão")
 
-    # Carregar a chave da API do arquivo .env
-    api_key = os.getenv("CHAVE_API_PORTAL")
-    if api_key:
-        print("Chave da API carregada com sucesso.")
-    else:
-        print("Erro: Chave da API não encontrada no arquivo .env.")
     # Verificar se a chave foi carregada corretamente
     if not api_key:
-        st.error("Erro: Chave da API não encontrada no arquivo .env.")
+        st.error("Erro: Chave da API não encontrada na variável de ambiente.")
         return
 
     # Parâmetros fixos
