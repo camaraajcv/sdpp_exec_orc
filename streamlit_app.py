@@ -73,12 +73,12 @@ def main():
     # Entrada para o código do órgão
     orgao_code = st.text_input("Digite o código do órgão")
 
-    # Órgão superior vazio
-    orgao_superior_code = ""
+    # Entrada para o código do órgão superior
+    orgao_superior_code = st.text_input("Digite o código do órgão superior")
 
-    # Verificar se o código do órgão foi fornecido
-    if not orgao_code:
-        st.error("Erro: O código do órgão não foi fornecido.")
+    # Verificar se os códigos foram fornecidos
+    if not orgao_code or not orgao_superior_code:
+        st.error("Erro: Os códigos do órgão e do órgão superior não foram fornecidos.")
         return
 
     # Buscar dados usando a função fetch_data
