@@ -13,6 +13,10 @@ def carregar_dados_excel(caminho_arquivo):
 
     # Criar um dicionário com o nome do órgão como chave e o código como valor
     orgaos = dict(zip(df['Órgão UGE Nome'], df['Órgão UGE Código']))
+    # Ordenar os órgãos por nome (chave do dicionário)
+    orgaos = dict(sorted(orgaos.items()))
+    
+  
     return orgaos
 
 # Acessar a variável de ambiente para a chave da API
