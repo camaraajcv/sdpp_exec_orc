@@ -1,7 +1,10 @@
 import streamlit as st
 import requests
 import pandas as pd
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 # Função para buscar os dados da API
 def fetch_data(year, headers):
     url_base = "https://api.portaldatransparencia.gov.br/api-de-dados/despesas/por-funcional-programatica/movimentacao-liquida"
@@ -31,12 +34,17 @@ st.write("Consulte as despesas por funcional programática do Portal da Transpar
 
 # Entradas do usuário
 year = st.number_input("Ano", min_value=2000, max_value=2025, value=2024, step=1)
-api_key = st.text_input("API Key", type="password")
+
+# Recupera a chave da API do ambiente
+api_key = os.getenv("CHAVE_API_PORTAL")
+
+if not api_key:
+    st.error("Chave da API não encontrada! Configure a variável de ambiente 'CHAVE_API_PORTAL'.")
 
 # Executa a consulta
 if st.button("Buscar Dados"):
     if not api_key:
-        st.error("Insira uma chave de API válida!")
+        st.error("Chave da API não configurada corretamente!")
     else:
         headers = {
             "accept": "*/*",
