@@ -3,29 +3,30 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
-
-caminho_arquivo='arquivos/lista-de-orgaos.xls'
+# Caminho do arquivo Excel
+caminho_arquivo = 'arquivos/lista-de-orgaos.xlsx'
 
 # Função para ler os dados do Excel e criar o dicionário
 def carregar_dados_excel(caminho_arquivo):
     # Carregar a planilha Excel
-    df = pd.read_excel(caminho_arquivo,engine='openpyxl')
+    df = pd.read_excel(caminho_arquivo, engine='openpyxl')
 
     # Criar um dicionário com o nome do órgão como chave e o código como valor
     orgaos = dict(zip(df['nome_do_orgao'], df['orgao_codigo']))
     return orgaos
-# Acessar a variável de ambiente
-api_key = st.secrets["general"]["CHAVE_API_PORTAL"]
+
+# Acessar a variável de ambiente para a chave da API
+api_key = st.secrets["general"].get("CHAVE_API_PORTAL")
 
 if api_key:
     st.success('Chave da API carregada com sucesso.')
 else:
     st.error('Erro: Chave da API não encontrada na variável de ambiente.')
 
-# Função para obter o código do órgão com base no nome
+# Carregar os dados dos órgãos
 orgaos = carregar_dados_excel(caminho_arquivo)
 
-
+# Função para obter o código do órgão com base no nome
 def obter_codigo(orgao_nome):
     return orgaos.get(orgao_nome, "Órgão não encontrado")
 
