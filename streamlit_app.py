@@ -105,7 +105,7 @@ def main():
             # Adicionar legenda
             ax.legend(title='Categorias de Despesa')
 
-            ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 4} a {year})")
+            ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 9} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             st.pyplot(fig)
