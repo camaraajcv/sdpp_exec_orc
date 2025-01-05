@@ -84,6 +84,10 @@ def main():
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
 
+            # Remover pontos e substituir vírgulas por pontos nas colunas numéricas
+            for col in ['empenhado', 'liquidado', 'pago']:
+                df_grouped[col] = df_grouped[col].replace({'.': '', ',': '.'}, regex=True).astype(float)
+
             # Plotar o gráfico
             fig, ax = plt.subplots(figsize=(10, 6))
             df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
