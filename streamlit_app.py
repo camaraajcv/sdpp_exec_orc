@@ -44,6 +44,10 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
         st.error("Erro: A chave da API não foi fornecida.")
         return None
 
+    # Exibir os códigos dos órgãos para depuração
+    st.write(f"Código do órgão: {orgao_code}")
+    st.write(f"Código do órgão superior: {orgao_superior_code}")
+
     for y in range(year - 4, year + 1):
         page = 1
         while True:
@@ -59,6 +63,10 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
             # Realiza a requisição
             response = requests.get(url, headers=headers)
 
+            # Exibir o conteúdo da resposta para diagnóstico
+            st.write(f"Requisição para {url}")
+            st.write(f"Resposta da API: {response.text}")
+
             # Verificar o status da resposta
             if response.status_code == 200:
                 data = response.json()
@@ -72,7 +80,6 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
                 break  # Em caso de erro, sai do loop
 
     return all_data
-
 # Função para limpar e converter colunas para numérico
 def clean_and_convert(df):
     # Substituir vírgulas por pontos e converter para float
