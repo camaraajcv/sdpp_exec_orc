@@ -1,6 +1,5 @@
 import requests
 import pandas as pd
-import os
 import streamlit as st
 import matplotlib.pyplot as plt
 
@@ -51,13 +50,6 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
 
     return all_data
 
-# Função para limpar e converter colunas para numérico
-def clean_and_convert(df):
-    # Substituir vírgulas por pontos e converter para float
-    for col in ['empenhado', 'liquidado', 'pago']:
-        df[col] = df[col].str.replace('.', '').str.replace(',', '.').astype(float)
-    return df
-
 # Função principal do Streamlit
 def main():
     # Título da aplicação
@@ -85,10 +77,10 @@ def main():
         if filtered_data:
             # Organizar os dados por ano
             df = pd.DataFrame(filtered_data)
+            df['empenhado'] = pd.to_numeric(df['empenhado'], errors='coerce')
+            df['liquidado'] = pd.to_numeric(df['liquidado'], errors='coerce')
+            df['pago'] = pd.to_numeric(df['pago'], errors='coerce')
             df_grouped = df.groupby('ano')[['empenhado', 'liquidado', 'pago']].sum().reset_index()
-
-            # Limpar e converter as colunas para numérico
-            df_grouped = clean_and_convert(df_grouped)
 
             # Exibir o DataFrame para diagnóstico
             st.subheader("Dados Agrupados por Ano")
@@ -96,10 +88,18 @@ def main():
 
             # Plotar o gráfico
             fig, ax = plt.subplots(figsize=(10, 6))
-            df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
+            df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax, colormap='Set3')
+
+            # Adicionar rótulos de dados
+            for p in ax.patches:
+                ax.annotate(f'{p.get_height():,.2f}', (p.get_x() + p.get_width() / 2., p.get_height() + p.get_y()),
+                            ha='center', va='center', fontsize=10, color='black', xytext=(0, 5),
+                            textcoords='offset points')
+
             ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 4} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
+            ax.legend(title='Categorias', labels=['Empenhado', 'Liquidado', 'Pago'])
             st.pyplot(fig)
         else:
             st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code}.")
