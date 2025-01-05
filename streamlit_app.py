@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import streamlit as st
 import matplotlib.pyplot as plt
 
-import os
 
 # Exibir o diretório atual de trabalho
 print(f"Diretório atual de trabalho: {os.getcwd()}")
@@ -64,7 +63,10 @@ def main():
 
     # Carregar a chave da API do arquivo .env
     api_key = os.getenv("CHAVE_API_PORTAL")
-
+    if api_key:
+        print("Chave da API carregada com sucesso.")
+    else:
+        print("Erro: Chave da API não encontrada no arquivo .env.")
     # Verificar se a chave foi carregada corretamente
     if not api_key:
         st.error("Erro: Chave da API não encontrada no arquivo .env.")
