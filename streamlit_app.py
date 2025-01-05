@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import os
 from dotenv import load_dotenv
+import streamlit as st
 
 # Carregar variáveis de ambiente do arquivo .env
 load_dotenv(dotenv_path="chave.env")
@@ -12,7 +13,7 @@ def fetch_data(year, orgao_code, page=1, api_key=None):
     
     # Verificar se a chave da API está presente
     if not api_key:
-        print("Erro: A chave da API não foi fornecida.")
+        st.error("Erro: A chave da API não foi fornecida.")
         return None
     
     # Construir a URL com os parâmetros
@@ -25,18 +26,18 @@ def fetch_data(year, orgao_code, page=1, api_key=None):
     }
 
     # Realiza a requisição
+    st.write(f"Fazendo requisição para a URL: {url}")  # Diagnóstico no Streamlit
     response = requests.get(url, headers=headers)
     
     # Exibe a URL da requisição e a resposta para diagnóstico
-    print(f"URL da requisição: {url}")
-    print(f"Resposta da API: {response.status_code}")
+    st.write(f"Resposta da API: {response.status_code}")
     
     # Verificar o status da resposta
     if response.status_code == 200:
         data = response.json()
         return data
     else:
-        print(f"Erro na requisição: {response.text}")
+        st.write(f"Erro na requisição: {response.text}")
         return None
 
 # Configurações e parâmetros
@@ -49,15 +50,17 @@ api_key = os.getenv("CHAVE_API_PORTAL")
 
 # Verificar se a chave foi carregada corretamente
 if not api_key:
-    print("Erro: Chave da API não encontrada no arquivo .env.")
+    st.error("Erro: Chave da API não encontrada no arquivo .env.")
 else:
+    st.write(f"Chave da API carregada: {api_key}")  # Diagnóstico no Streamlit
+
     # Buscar dados usando a função fetch_data
     data = fetch_data(year, orgao_code, page, api_key)
 
     # Exibir os dados se a resposta for válida
     if data:
         df = pd.DataFrame(data)
-        print("Dados Recuperados:")
-        print(df)
+        st.write("Dados Recuperados:")
+        st.dataframe(df)
     else:
-        print("Nenhum dado encontrado ou erro na requisição.")
+        st.warning("Nenhum dado encontrado ou erro na requisição.")
