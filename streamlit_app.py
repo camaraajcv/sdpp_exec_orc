@@ -5,7 +5,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 
 # Acessar a variável de ambiente
-api_key = os.getenv('CHAVE_API_PORTAL')
+api_key = st.secrets["general"]["CHAVE_API_PORTAL"]
 
 if api_key:
     print('Chave da APIf carregada com sucesso.')
