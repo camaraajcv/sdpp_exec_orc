@@ -21,7 +21,7 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
         st.error("Erro: A chave da API não foi fornecida.")
         return None
 
-    for y in range(year - 9, year + 1):
+    for y in range(year - 4, year + 1):
         page = 1
         while True:
             # Construir a URL com os parâmetros
@@ -67,19 +67,26 @@ def main():
         st.error("Erro: Chave da API não encontrada na variável de ambiente.")
         return
 
-    # Parâmetros fixos
-    orgao_code = "52111"  # Código do órgão
-    orgao_superior_code = "52000"  # Código do órgão superior
-
     # Criar um seletor para o ano
     year = st.selectbox("Escolha o ano", [2024, 2023, 2022, 2021])
+
+    # Entrada para o código do órgão
+    orgao_code = st.text_input("Digite o código do órgão")
+
+    # Órgão superior vazio
+    orgao_superior_code = ""
+
+    # Verificar se o código do órgão foi fornecido
+    if not orgao_code:
+        st.error("Erro: O código do órgão não foi fornecido.")
+        return
 
     # Buscar dados usando a função fetch_data
     data = fetch_data(year, orgao_code, orgao_superior_code, api_key)
 
     # Exibir os dados se a resposta for válida
     if data:
-        # Filtrar os dados para incluir apenas os registros com o código do órgão 52111
+        # Filtrar os dados para incluir apenas os registros com o código do órgão fornecido
         filtered_data = [item for item in data if item.get('codigoOrgao') == orgao_code]
         if filtered_data:
             # Organizar os dados por ano
@@ -96,7 +103,7 @@ def main():
             # Plotar o gráfico de barras empilhadas
             fig, ax = plt.subplots(figsize=(10, 6))
             df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
-            ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 9} a {year})")
+            ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 4} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             ax.legend(title='Categorias de Despesa')
@@ -108,7 +115,7 @@ def main():
             # Plotar o gráfico de linha para o total acumulado
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(df_grouped['ano'], df_grouped['total'], marker='o', color='black', linestyle='-', linewidth=2, label='Total Acumulado')
-            ax.set_title(f"Total Acumulado de Despesas: {orgao_code} ({year - 9} a {year})")
+            ax.set_title(f"Total Acumulado de Despesas: {orgao_code} ({year - 4} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             ax.legend()
