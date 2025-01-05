@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 api_key = os.getenv('CHAVE_API_PORTAL')
 
 if api_key:
-    print('Chave da API carregada com sucesso.')
+    print('Chave da APIf carregada com sucesso.')
 else:
     print('Erro: Chave da API não encontrada na variável de ambiente.')
 
