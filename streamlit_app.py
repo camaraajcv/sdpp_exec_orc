@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 api_key = st.secrets["general"]["CHAVE_API_PORTAL"]
 
 if api_key:
-    print('Chave da APIf carregada com sucesso.')
+    print('Chave da API carregada com sucesso.')
 else:
     print('Erro: Chave da API não encontrada na variável de ambiente.')
 
@@ -79,6 +79,11 @@ def main():
             # Organizar os dados por ano
             df = pd.DataFrame(filtered_data)
             df_grouped = df.groupby('ano')[['empenhado', 'liquidado', 'pago']].sum().reset_index()
+
+            # Converter as colunas para numérico
+            df_grouped['empenhado'] = pd.to_numeric(df_grouped['empenhado'], errors='coerce')
+            df_grouped['liquidado'] = pd.to_numeric(df_grouped['liquidado'], errors='coerce')
+            df_grouped['pago'] = pd.to_numeric(df_grouped['pago'], errors='coerce')
 
             # Plotar o gráfico
             fig, ax = plt.subplots(figsize=(10, 6))
