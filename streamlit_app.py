@@ -3,6 +3,7 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 
+
 caminho_arquivo='arquivos/lista-de-orgaos.xls'
 
 # Função para ler os dados do Excel e criar o dicionário
