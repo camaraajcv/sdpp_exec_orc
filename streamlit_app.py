@@ -38,3 +38,29 @@ for year in range(2022, 2025 + 1):
         download_data(year, month)
 
 consolidate_data(2022, 2025)
+
+
+import streamlit as st
+import pandas as pd
+
+# Carregar os dados
+@st.cache_data
+def load_data():
+    return pd.read_parquet("data/full_data.parquet")
+
+# App
+st.title("Análise de Despesas Públicas")
+data = load_data()
+
+anos = sorted(data['ano'].unique())
+anos_selecionados = st.multiselect("Selecione os anos", anos, default=anos)
+
+# Filtrar os dados
+dados_filtrados = data[data['ano'].isin(anos_selecionados)]
+st.write(f"Exibindo dados de {len(dados_filtrados)} registros.")
+
+# Exibir tabela
+st.dataframe(dados_filtrados)
+
+# Visualizações
+st.bar_chart(dados_filtrados.groupby('orgao')['valor'].sum())
