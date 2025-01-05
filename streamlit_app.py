@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
+
 orgaos = {
     "CAMARA DOS DEPUTADOS": 1000,
     "FUNDO ROTATIVO DA CAMARA DOS DEPUTADOS": 1901,
@@ -65,13 +66,14 @@ orgaos = {
     "SECRETARIA DA SAUDE E EDUCACAO": 25205,
     "FUND.PREVISTO INSTITUTO TENTALP-VIADAGRANCE": 25220
 }
+
 # Acessar a variável de ambiente
 api_key = st.secrets["general"]["CHAVE_API_PORTAL"]
 
 if api_key:
-    print('Chave da API carregada com sucesso.')
+    st.success('Chave da API carregada com sucesso.')
 else:
-    print('Erro: Chave da API não encontrada na variável de ambiente.')
+    st.error('Erro: Chave da API não encontrada na variável de ambiente.')
 
 # Função para obter o código do órgão com base no nome
 def obter_codigo(orgao_nome):
@@ -136,16 +138,13 @@ def main():
     # Criar um seletor para o ano
     year = st.selectbox("Escolha o ano", [2024, 2023, 2022, 2021])
 
-    # Entrada para o código do órgão
-    orgao_selecionado = input("Selecione o nome do órgão: ")
+    # Seleção do órgão
+    orgao_selecionado = st.selectbox("Selecione o órgão", list(orgaos.keys()))
     orgao_code = obter_codigo(orgao_selecionado)
-    print(f"O código do órgão '{orgao_selecionado}' é: {orgao_code}")
-    
 
-    # Entrada para o código do órgão superior
-    orgao_selecionado2 = input("Selecione o nome do órgão: ")
+    # Seleção do órgão superior
+    orgao_selecionado2 = st.selectbox("Selecione o órgão superior", list(orgaos.keys()))
     orgao_superior_code = obter_codigo(orgao_selecionado2)
-    print(f"O código do órgão '{orgao_selecionado2}' é: {orgao_superior_code}")
 
     # Verificar se os códigos foram fornecidos
     if not orgao_code or not orgao_superior_code:
@@ -174,7 +173,7 @@ def main():
             # Plotar o gráfico de barras empilhadas
             fig, ax = plt.subplots(figsize=(10, 6))
             df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
-            ax.set_title(f"Comparativo de Despesas: {orgao_code} ({year - 4} a {year})")
+            ax.set_title(f"Comparativo de Despesas: {orgao_selecionado} ({year - 4} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             ax.legend(title='Categorias de Despesa')
@@ -186,7 +185,7 @@ def main():
             # Plotar o gráfico de linha para o total acumulado
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(df_grouped['ano'], df_grouped['total'], marker='o', color='black', linestyle='-', linewidth=2, label='Total Acumulado')
-            ax.set_title(f"Total Acumulado de Despesas: {orgao_code} ({year - 4} a {year})")
+            ax.set_title(f"Total Acumulado de Despesas: {orgao_selecionado} ({year - 4} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             ax.legend()
