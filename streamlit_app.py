@@ -4,7 +4,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 
 # Caminho do arquivo Excel
-caminho_arquivo = 'arquivos/lista-de-orgaos.xls'
+caminho_arquivo = 'arquivos/lista-de-orgaos.xlsx'
 
 # Função para ler os dados do Excel e criar o dicionário
 def carregar_dados_excel(caminho_arquivo):
