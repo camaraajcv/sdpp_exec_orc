@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
-dicionario_orgao = {
+orgaos = {
     "CAMARA DOS DEPUTADOS": 1000,
     "FUNDO ROTATIVO DA CAMARA DOS DEPUTADOS": 1901,
     "SENADO FEDERAL": 2000,
