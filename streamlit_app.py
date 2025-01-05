@@ -1,88 +1,63 @@
-import streamlit as st
 import requests
 import pandas as pd
 import os
 from dotenv import load_dotenv
 
-# Carregar variáveis de ambiente
+# Carregar variáveis de ambiente do arquivo .env
 load_dotenv(dotenv_path="chave.env")
 
 # Função para buscar dados da API
-def fetch_data(year, headers, filters):
+def fetch_data(year, orgao_code, page=1, api_key=None):
     url_base = "https://api.portaldatransparencia.gov.br/api-de-dados/despesas/por-orgao"
-    page = 1
-    data = []
-
-    while True:
-        # Construir a URL com os filtros adicionais
-        params = f"ano={year}&pagina={page}"
-        for key, value in filters.items():
-            if value:
-                params += f"&{key}={value}"
-
-        url = f"{url_base}?{params}"
-        response = requests.get(url, headers=headers)
-
-        # Exibir a URL e resposta para diagnóstico
-        st.write(f"URL da requisição: {url}")
-        st.write(f"Resposta da API: {response.text}")  # Exibe a resposta completa para depuração
-
-        if response.status_code != 200:
-            st.error(f"Erro ao buscar dados: {response.status_code}")
-            break
-
-        page_data = response.json()
-
-        # Verificar se a resposta contém dados válidos
-        if page_data and 'codigoOrgao' in page_data[0]:
-            data.extend(page_data)
-        else:
-            st.warning("Nenhum dado válido encontrado ou dados com valores padrão.")
-
-        if not page_data:  # Se não houver mais dados, interrompa
-            break
-
-        page += 1  # Avance para a próxima página
-
-    return data
-
-# Configuração do Streamlit
-st.title("Consulta ao Portal da Transparência")
-st.write("Consulte as despesas por órgão do Portal da Transparência.")
-
-# Entradas do usuário
-year = st.number_input("Ano", min_value=2000, max_value=2025, value=2024, step=1)
-
-# Seleção de filtros adicionais
-codigo_orgao = st.text_input("Código do Órgão (opcional)", "52111")
-
-# Recuperar a chave da API do arquivo .env
-api_key = os.getenv("CHAVE_API_PORTAL")
-
-if not api_key:
-    st.error("Chave da API não encontrada! Configure o arquivo chave.env.")
-else:
+    
+    # Verificar se a chave da API está presente
+    if not api_key:
+        print("Erro: A chave da API não foi fornecida.")
+        return None
+    
+    # Construir a URL com os parâmetros
+    url = f"{url_base}?ano={year}&pagina={page}&codigoOrgao={orgao_code}"
+    
+    # Cabeçalhos da requisição, incluindo a chave da API
     headers = {
         "accept": "*/*",
-        "chave-api-dados": api_key
+        "chave-api-dados": api_key  # Passando a chave da API no cabeçalho
     }
 
-# Executar a consulta
-if st.button("Buscar Dados"):
-    with st.spinner("Buscando dados..."):
-        # Preparar filtros
-        # Alteramos o filtro 'empenhado' para passar um valor específico ("true")
-        filters = {"codigoOrgao": codigo_orgao, "empenhado": "true"}
-
-        data = fetch_data(year, headers, filters)
-
-    if data:
-        st.success(f"Dados recuperados com sucesso! Total de registros: {len(data)}")
-        df = pd.DataFrame(data)
-        st.dataframe(df)
-
-        # Opção de baixar os dados como CSV
-        csv = df.to_csv(index=False)
-        st.download_button("Baixar Dados em CSV", csv, "dados.csv")
+    # Realiza a requisição
+    response = requests.get(url, headers=headers)
+    
+    # Exibe a URL da requisição e a resposta para diagnóstico
+    print(f"URL da requisição: {url}")
+    print(f"Resposta da API: {response.status_code}")
+    
+    # Verificar o status da resposta
+    if response.status_code == 200:
+        data = response.json()
+        return data
     else:
-        st.warning("Nenhum dado encontrado ou erro na requisição.")
+        print(f"Erro na requisição: {response.text}")
+        return None
+
+# Configurações e parâmetros
+year = 2024
+orgao_code = "52111"  # Exemplo de código do órgão
+page = 1
+
+# Carregar a chave da API do arquivo .env
+api_key = os.getenv("CHAVE_API_PORTAL")
+
+# Verificar se a chave foi carregada corretamente
+if not api_key:
+    print("Erro: Chave da API não encontrada no arquivo .env.")
+else:
+    # Buscar dados usando a função fetch_data
+    data = fetch_data(year, orgao_code, page, api_key)
+
+    # Exibir os dados se a resposta for válida
+    if data:
+        df = pd.DataFrame(data)
+        print("Dados Recuperados:")
+        print(df)
+    else:
+        print("Nenhum dado encontrado ou erro na requisição.")
