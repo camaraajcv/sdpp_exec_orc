@@ -3,8 +3,19 @@ import requests
 import pandas as pd
 import os
 from dotenv import load_dotenv
+from dotenv import load_dotenv
+import os
 
-load_dotenv()
+# Tente carregar o arquivo .env
+load_dotenv(dotenv_path="chave.env")
+
+# Verifique a chave
+api_key = os.getenv("CHAVE_API_PORTAL")
+
+if not api_key:
+    print("Chave da API não encontrada!")
+else:
+    print(f"Chave encontrada: {api_key}")
 # Função para buscar os dados da API
 def fetch_data(year, headers):
     url_base = "https://api.portaldatransparencia.gov.br/api-de-dados/despesas/por-funcional-programatica/movimentacao-liquida"
