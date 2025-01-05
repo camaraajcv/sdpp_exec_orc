@@ -23,16 +23,25 @@ def fetch_data(year, headers, filters):
         url = f"{url_base}?{params}"
         response = requests.get(url, headers=headers)
 
+        # Exibir a URL e resposta para diagnóstico
+        st.write(f"URL da requisição: {url}")
+        st.write(f"Resposta da API: {response.text}")  # Exibe a resposta completa para depuração
+
         if response.status_code != 200:
             st.error(f"Erro ao buscar dados: {response.status_code}")
-            st.write(response.text)  # Diagnóstico do erro
             break
 
         page_data = response.json()
+
+        # Verificar se a resposta contém dados válidos
+        if page_data and 'codigoOrgao' in page_data[0]:
+            data.extend(page_data)
+        else:
+            st.warning("Nenhum dado válido encontrado ou dados com valores padrão.")
+
         if not page_data:  # Se não houver mais dados, interrompa
             break
 
-        data.extend(page_data)
         page += 1  # Avance para a próxima página
 
     return data
@@ -45,7 +54,7 @@ st.write("Consulte as despesas por órgão do Portal da Transparência.")
 year = st.number_input("Ano", min_value=2000, max_value=2025, value=2024, step=1)
 
 # Seleção de filtros adicionais
-codigo_orgao = st.text_input("Código do Órgão (opcional)")
+codigo_orgao = st.text_input("Código do Órgão (opcional)", "52111")
 
 # Recuperar a chave da API do arquivo .env
 api_key = os.getenv("CHAVE_API_PORTAL")
@@ -62,12 +71,7 @@ else:
 if st.button("Buscar Dados"):
     with st.spinner("Buscando dados..."):
         # Preparar filtros
-        filters = {
-            "codigoOrgao": codigo_orgao
-        }
-
-        # Filtrar apenas os valores preenchidos
-        filters = {k: v for k, v in filters.items() if v}
+        filters = {"codigoOrgao": codigo_orgao}
 
         data = fetch_data(year, headers, filters)
 
