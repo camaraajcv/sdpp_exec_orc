@@ -135,9 +135,10 @@ def main():
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
 
-           # Criar subplots lado a lado (2 colunas)
-            fig, (ax1, ax2) = plt.subplots(figsize=(15, 6), ncols=2)
-            # Gráfico de barras (lado esquerdo)
+           # Criar subplots (1 coluna, 2 linhas)
+            fig, (ax1, ax2) = plt.subplots(figsize=(10, 12), nrows=2)
+
+            # Gráfico de barras (na parte superior)
             df_grouped.set_index('ano').plot(kind='bar', stacked=False, ax=ax1)
             ax1.set_title(f"Comparativo de Despesas: {orgao_selecionado} ({year - 8} a {year})")
             ax1.set_xlabel("Ano")
@@ -150,7 +151,7 @@ def main():
             # Calcular o total acumulado
             df_grouped['total'] = df_grouped[['empenhado', 'liquidado', 'pago']].sum(axis=1)
 
-            # Gráfico de linha (lado direito)
+            # Gráfico de linha (na parte inferior)
             ax2.plot(df_grouped['ano'], df_grouped['total'], marker='o', color='black', linestyle='-', linewidth=2, label='Total Acumulado')
             ax2.set_title(f"Total Acumulado de Despesas: {orgao_selecionado} ({year - 8} a {year})")
             ax2.set_xlabel("Ano")
