@@ -162,4 +162,3 @@ def main():
 # Rodar a aplicação Streamlit
 if __name__ == "__main__":
     main()
-
