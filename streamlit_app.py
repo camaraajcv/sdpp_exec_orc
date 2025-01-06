@@ -48,7 +48,7 @@ def fetch_data(year, orgao_code, api_key=None):
 
     for y in range(year - 8, year + 1):
         page = 1  # Apenas a página 1 será requisitada
-        url = f"{url_base}?ano={y}&pagina={page}&codigoOrgao={orgao_code}"
+        url = f"{url_base}?ano={y}&codigoOrgao={orgao_code}&pagina={page}"
 
         # Cabeçalhos da requisição, incluindo a chave da API
         headers = {
