@@ -80,9 +80,10 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
 
 # Função para limpar e converter colunas para numérico
 def clean_and_convert(df):
-    # Substituir vírgulas por pontos e converter para float
+    # Substituir vírgulas por pontos e remover pontos de milhares
     for col in ['empenhado', 'liquidado', 'pago']:
-        df[col] = df[col].str.replace('.', '').str.replace(',', '.').astype(float)
+        df[col] = df[col].str.replace('.', '', regex=False).str.replace(',', '.', regex=False)
+        df[col] = pd.to_numeric(df[col], errors='coerce')
     return df
 
 # Função principal do Streamlit
@@ -161,3 +162,4 @@ def main():
 # Rodar a aplicação Streamlit
 if __name__ == "__main__":
     main()
+
