@@ -3,6 +3,8 @@ import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
 from datetime import datetime
+from matplotlib.ticker import FuncFormatter
+
 # Caminho do arquivo Excel
 caminho_arquivo = 'arquivos/lista-de-orgaos.xlsx'
 # Obter o ano atual
@@ -77,7 +79,16 @@ def clean_and_convert(df):
         df[col] = df[col].str.replace('.', '', regex=False).str.replace(',', '.', regex=False)
         df[col] = pd.to_numeric(df[col], errors='coerce')
     return df
-
+ # Função de formatação
+def formatar_eixo_y(x, pos):
+    if x >= 1e12:
+        return f'{x/1e12:.1f} Tri'
+    elif x >= 1e9:
+        return f'{x/1e9:.1f} Bi'
+    elif x >= 1e6:
+        return f'{x/1e6:.1f} Mi'
+    else:
+        return f'{x:.1f}'
 # Função principal do Streamlit
 def main():
     # Título da aplicação
@@ -124,6 +135,7 @@ def main():
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
 
+           
             # Plotar o gráfico de barras empilhadas
             fig, ax = plt.subplots(figsize=(10, 6))
             df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
@@ -131,6 +143,10 @@ def main():
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             ax.legend(title='Categorias de Despesa')
+
+            # Aplicar formatação ao eixo Y para as barras empilhadas
+            ax.yaxis.set_major_formatter(FuncFormatter(formatar_eixo_y))
+
             st.pyplot(fig)
 
             # Calcular o total acumulado
@@ -143,6 +159,10 @@ def main():
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             ax.legend()
+
+            # Aplicar formatação ao eixo Y para o gráfico de linha
+            ax.yaxis.set_major_formatter(FuncFormatter(formatar_eixo_y))
+
             st.pyplot(fig)
         else:
             st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code} e orgao superior {orgao_superior_code}.")
