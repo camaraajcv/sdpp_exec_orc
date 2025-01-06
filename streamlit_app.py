@@ -135,34 +135,35 @@ def main():
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
 
-           
-            # Plotar o gráfico de barras empilhadas
-            fig, ax = plt.subplots(figsize=(10, 6))
-            df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
-            ax.set_title(f"Comparativo de Despesas: {orgao_selecionado} ({year - 8} a {year})")
-            ax.set_xlabel("Ano")
-            ax.set_ylabel("Valor (R$)")
-            ax.legend(title='Categorias de Despesa')
+           # Criar subplots lado a lado (2 colunas)
+            fig, (ax1, ax2) = plt.subplots(figsize=(15, 6), ncols=2)
+            # Gráfico de barras (lado esquerdo)
+            df_grouped.set_index('ano').plot(kind='bar', stacked=False, ax=ax1)
+            ax1.set_title(f"Comparativo de Despesas: {orgao_selecionado} ({year - 8} a {year})")
+            ax1.set_xlabel("Ano")
+            ax1.set_ylabel("Valor (R$)")
+            ax1.legend(title='Categorias de Despesa')
 
-            # Aplicar formatação ao eixo Y para as barras empilhadas
-            ax.yaxis.set_major_formatter(FuncFormatter(formatar_eixo_y))
-
-            st.pyplot(fig)
+            # Aplicar formatação ao eixo Y para o gráfico de barras
+            ax1.yaxis.set_major_formatter(FuncFormatter(formatar_eixo_y))
 
             # Calcular o total acumulado
             df_grouped['total'] = df_grouped[['empenhado', 'liquidado', 'pago']].sum(axis=1)
 
-            # Plotar o gráfico de linha para o total acumulado
-            fig, ax = plt.subplots(figsize=(10, 6))
-            ax.plot(df_grouped['ano'], df_grouped['total'], marker='o', color='black', linestyle='-', linewidth=2, label='Total Acumulado')
-            ax.set_title(f"Total Acumulado de Despesas: {orgao_selecionado} ({year - 8} a {year})")
-            ax.set_xlabel("Ano")
-            ax.set_ylabel("Valor (R$)")
-            ax.legend()
+            # Gráfico de linha (lado direito)
+            ax2.plot(df_grouped['ano'], df_grouped['total'], marker='o', color='black', linestyle='-', linewidth=2, label='Total Acumulado')
+            ax2.set_title(f"Total Acumulado de Despesas: {orgao_selecionado} ({year - 8} a {year})")
+            ax2.set_xlabel("Ano")
+            ax2.set_ylabel("Valor (R$)")
+            ax2.legend()
 
             # Aplicar formatação ao eixo Y para o gráfico de linha
-            ax.yaxis.set_major_formatter(FuncFormatter(formatar_eixo_y))
+            ax2.yaxis.set_major_formatter(FuncFormatter(formatar_eixo_y))
 
+            # Ajustar layout para evitar sobreposição
+            plt.tight_layout()
+
+            # Exibir os gráficos
             st.pyplot(fig)
         else:
             st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code} e orgao superior {orgao_superior_code}.")
