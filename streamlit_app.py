@@ -2,10 +2,11 @@ import requests
 import pandas as pd
 import streamlit as st
 import matplotlib.pyplot as plt
-
+from datetime import datetime
 # Caminho do arquivo Excel
 caminho_arquivo = 'arquivos/lista-de-orgaos.xlsx'
-
+# Obter o ano atual
+ano_atual = datetime.now().year
 # Função para ler os dados do Excel e criar o dicionário
 def carregar_dados_excel(caminho_arquivo):
     # Carregar a planilha Excel
@@ -88,7 +89,7 @@ def main():
         return
 
     # Criar um seletor para o ano
-    year = st.selectbox("Escolha o ano", [2024, 2023, 2022, 2021])
+    year = st.selectbox("Escolha o ano", [ano_atual, ano_atual-1, ano_atual-2, ano_atual-3, ano_atual-4])
 
     # Seleção do órgão
     orgao_selecionado = st.selectbox("Selecione o órgão", list(orgaos.keys()))
