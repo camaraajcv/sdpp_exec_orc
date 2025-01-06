@@ -82,9 +82,7 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
 def clean_and_convert(df):
     # Substituir vírgulas por pontos e remover pontos de milhares
     for col in ['empenhado', 'liquidado', 'pago']:
-        # Remover pontos de milhares e substituir vírgulas por ponto decimal
         df[col] = df[col].str.replace('.', '', regex=False).str.replace(',', '.', regex=False)
-        # Converter para numérico
         df[col] = pd.to_numeric(df[col], errors='coerce')
     return df
 
@@ -133,6 +131,9 @@ def main():
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
 
+            # Verificar se a conversão para numérico foi bem-sucedida
+            st.write("Dados convertidos para numérico:", df_grouped)
+
             # Plotar o gráfico de barras empilhadas
             fig, ax = plt.subplots(figsize=(10, 6))
             df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
@@ -157,4 +158,8 @@ def main():
             st.warning(f"Nenhum dado encontrado para o código do órgão {orgao_code} e orgao superior {orgao_superior_code}.")
     else:
         st.warning("Nenhum dado encontrado ou erro na requisição.")
+
+# Rodar a aplicação Streamlit
+if __name__ == "__main__":
+    main()
 
