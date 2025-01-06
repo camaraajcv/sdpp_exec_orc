@@ -37,7 +37,7 @@ def obter_codigo(orgao_nome):
     return orgaos.get(orgao_nome, "Órgão não encontrado")
 
 # Função para buscar dados da API
-def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
+def fetch_data(year, orgao_code, api_key=None):
     url_base = "https://api.portaldatransparencia.gov.br/api-de-dados/despesas/por-orgao"
     all_data = []
 
@@ -48,7 +48,7 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
 
     for y in range(year - 8, year + 1):
         page = 1  # Apenas a página 1 será requisitada
-        url = f"{url_base}?ano={y}&pagina={page}&orgaoSuperior={orgao_superior_code}"
+        url = f"{url_base}?ano={y}&pagina={page}&codigoOrgao={orgao_code}"
 
         # Cabeçalhos da requisição, incluindo a chave da API
         headers = {
@@ -106,17 +106,11 @@ def main():
     orgao_selecionado = st.selectbox("Selecione o órgão", list(orgaos.keys()))
     orgao_code = obter_codigo(orgao_selecionado)
 
-    # Seleção do órgão superior
-    orgao_selecionado2 = st.selectbox("Selecione o órgão superior", list(orgaos.keys()))
-    orgao_superior_code = obter_codigo(orgao_selecionado2)
-
-    # Verificar se os códigos foram fornecidos
-    if not orgao_code or not orgao_superior_code:
-        st.error("Erro: Os códigos do órgão e do órgão superior não foram fornecidos.")
-        return
+    
+   
 
     # Buscar dados usando a função fetch_data
-    data = fetch_data(year, orgao_code, orgao_superior_code, api_key)
+    data = fetch_data(year, orgao_code, api_key)
 
     # Exibir os dados se a resposta for válida
     if data:
