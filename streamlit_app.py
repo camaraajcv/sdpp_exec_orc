@@ -43,10 +43,6 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
         st.error("Erro: A chave da API não foi fornecida.")
         return None
 
-    # Exibir os códigos dos órgãos para depuração
-    st.write(f"Código do órgão: {orgao_code}")
-    st.write(f"Código do órgão superior: {orgao_superior_code}")
-
     for y in range(year - 4, year + 1):
         page = 1  # Apenas a página 1 será requisitada
         url = f"{url_base}?ano={y}&pagina={page}&codigoOrgao={orgao_code}&orgaoSuperior={orgao_superior_code}"
@@ -60,10 +56,6 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
         # Realiza a requisição
         response = requests.get(url, headers=headers)
 
-        # Exibir o conteúdo da resposta para diagnóstico
-        st.write(f"Requisição para {url}")
-        st.write(f"Resposta da API: {response.text}")
-
         # Verificar o status da resposta
         if response.status_code == 200:
             data = response.json()
@@ -75,7 +67,6 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
             st.write(f"Erro na requisição: {response.text}")
             break  # Em caso de erro, sai do loop
 
-    st.write("Dados acumulados:", all_data)  # Depuração para verificar os dados acumulados
     return all_data
 
 # Função para limpar e converter colunas para numérico
@@ -119,8 +110,6 @@ def main():
     if data:
         # Filtrar os dados para incluir apenas os registros com o código do órgão fornecido
         filtered_data = [item for item in data if str(item.get('codigoOrgao')) == str(orgao_code)]
-        
-        st.write(f"Total de registros encontrados: {len(filtered_data)}")
 
         if filtered_data:
             # Organizar os dados por ano
@@ -133,9 +122,6 @@ def main():
             # Exibir o DataFrame para diagnóstico
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
-
-            # Verificar se a conversão para numérico foi bem-sucedida
-            st.write("Dados convertidos para numérico:", df_grouped)
 
             # Plotar o gráfico de barras empilhadas
             fig, ax = plt.subplots(figsize=(10, 6))
@@ -165,3 +151,4 @@ def main():
 # Rodar a aplicação Streamlit
 if __name__ == "__main__":
     main()
+
