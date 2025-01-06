@@ -70,13 +70,10 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
             if response.status_code == 200:
                 data = response.json()
                 if data:
-                    # Filtrar dados vazios e adicionar apenas dados válidos
-                    valid_data = [item for item in data if item.get('empenhado') is not None and item.get('liquidado') is not None and item.get('pago') is not None]
-                    if valid_data:
-                        all_data.extend(valid_data)
-                    page += 1
+                    all_data.extend(data)
+                    page += 1  # Continuar para a próxima página
                 else:
-                    break  # Não há mais dados, sai do loop
+                    break  # Não há mais dados, sai do loop para esse ano
             else:
                 st.write(f"Erro na requisição: {response.text}")
                 break  # Em caso de erro, sai do loop
@@ -163,3 +160,4 @@ def main():
 # Rodar a aplicação Streamlit
 if __name__ == "__main__":
     main()
+
