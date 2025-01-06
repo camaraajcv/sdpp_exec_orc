@@ -43,7 +43,7 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
         st.error("Erro: A chave da API não foi fornecida.")
         return None
 
-    for y in range(year - 4, year + 1):
+    for y in range(year - 8, year + 1):
         page = 1  # Apenas a página 1 será requisitada
         url = f"{url_base}?ano={y}&pagina={page}&codigoOrgao={orgao_code}&orgaoSuperior={orgao_superior_code}"
 
@@ -126,7 +126,7 @@ def main():
             # Plotar o gráfico de barras empilhadas
             fig, ax = plt.subplots(figsize=(10, 6))
             df_grouped.set_index('ano').plot(kind='bar', stacked=True, ax=ax)
-            ax.set_title(f"Comparativo de Despesas: {orgao_selecionado} ({year - 4} a {year})")
+            ax.set_title(f"Comparativo de Despesas: {orgao_selecionado} ({year - 8} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             ax.legend(title='Categorias de Despesa')
@@ -138,7 +138,7 @@ def main():
             # Plotar o gráfico de linha para o total acumulado
             fig, ax = plt.subplots(figsize=(10, 6))
             ax.plot(df_grouped['ano'], df_grouped['total'], marker='o', color='black', linestyle='-', linewidth=2, label='Total Acumulado')
-            ax.set_title(f"Total Acumulado de Despesas: {orgao_selecionado} ({year - 4} a {year})")
+            ax.set_title(f"Total Acumulado de Despesas: {orgao_selecionado} ({year - 8} a {year})")
             ax.set_xlabel("Ano")
             ax.set_ylabel("Valor (R$)")
             ax.legend()
