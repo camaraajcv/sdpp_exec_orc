@@ -48,36 +48,34 @@ def fetch_data(year, orgao_code, orgao_superior_code, api_key=None):
     st.write(f"Código do órgão superior: {orgao_superior_code}")
 
     for y in range(year - 4, year + 1):
-        page = 1
-        while True:
-            # Construir a URL com os parâmetros
-            url = f"{url_base}?ano={y}&pagina={page}&codigoOrgao={orgao_code}&orgaoSuperior={orgao_superior_code}"
+        page = 1  # Apenas a página 1 será requisitada
+        url = f"{url_base}?ano={y}&pagina={page}&codigoOrgao={orgao_code}&orgaoSuperior={orgao_superior_code}"
 
-            # Cabeçalhos da requisição, incluindo a chave da API
-            headers = {
-                "accept": "*/*",
-                "chave-api-dados": api_key  # Passando a chave da API no cabeçalho
-            }
+        # Cabeçalhos da requisição, incluindo a chave da API
+        headers = {
+            "accept": "*/*",
+            "chave-api-dados": api_key  # Passando a chave da API no cabeçalho
+        }
 
-            # Realiza a requisição
-            response = requests.get(url, headers=headers)
+        # Realiza a requisição
+        response = requests.get(url, headers=headers)
 
-            # Exibir o conteúdo da resposta para diagnóstico
-            st.write(f"Requisição para {url}")
-            st.write(f"Resposta da API: {response.text}")
+        # Exibir o conteúdo da resposta para diagnóstico
+        st.write(f"Requisição para {url}")
+        st.write(f"Resposta da API: {response.text}")
 
-            # Verificar o status da resposta
-            if response.status_code == 200:
-                data = response.json()
-                if data:
-                    all_data.extend(data)
-                    page += 1  # Continuar para a próxima página
-                else:
-                    break  # Não há mais dados, sai do loop para esse ano
+        # Verificar o status da resposta
+        if response.status_code == 200:
+            data = response.json()
+            if data:
+                all_data.extend(data)
             else:
-                st.write(f"Erro na requisição: {response.text}")
-                break  # Em caso de erro, sai do loop
+                break  # Não há mais dados, sai do loop para esse ano
+        else:
+            st.write(f"Erro na requisição: {response.text}")
+            break  # Em caso de erro, sai do loop
 
+    st.write("Dados acumulados:", all_data)  # Depuração para verificar os dados acumulados
     return all_data
 
 # Função para limpar e converter colunas para numérico
@@ -131,6 +129,9 @@ def main():
             # Exibir o DataFrame para diagnóstico
             st.subheader("Dados Agrupados por Ano")
             st.dataframe(df_grouped)
+
+            # Verificar se a conversão para numérico foi bem-sucedida
+            st.write("Dados convertidos para numérico:", df_grouped)
 
             # Plotar o gráfico de barras empilhadas
             fig, ax = plt.subplots(figsize=(10, 6))
