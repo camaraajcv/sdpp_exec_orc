@@ -151,8 +151,10 @@ def main():
             # Calcular o total acumulado
             df_grouped['total'] = df_grouped[['empenhado', 'liquidado', 'pago']].sum(axis=1)
 
-            # Gráfico de linha (na parte inferior)
-            ax2.plot(df_grouped['ano'], df_grouped['total'], marker='o', color='black', linestyle='-', linewidth=2, label='Total Acumulado')
+            # Gráfico de linha (na parte inferior) com empenhados, liquidados e pagos
+            ax2.plot(df_grouped['ano'], df_grouped['empenhado'], marker='o', color='blue', linestyle='-', linewidth=2, label='Empenhado')
+            ax2.plot(df_grouped['ano'], df_grouped['liquidado'], marker='o', color='green', linestyle='-', linewidth=2, label='Liquidado')
+            ax2.plot(df_grouped['ano'], df_grouped['pago'], marker='o', color='red', linestyle='-', linewidth=2, label='Pago')
             ax2.set_title(f"Total Acumulado de Despesas: {orgao_selecionado} ({year - 8} a {year})")
             ax2.set_xlabel("Ano")
             ax2.set_ylabel("Valor (R$)")
