@@ -118,7 +118,10 @@ def main():
     # Exibir os dados se a resposta for válida
     if data:
         # Filtrar os dados para incluir apenas os registros com o código do órgão fornecido
-        filtered_data = [item for item in data if item.get('codigoOrgao') == orgao_code]
+        filtered_data = [item for item in data if str(item.get('codigoOrgao')) == str(orgao_code)]
+        
+        st.write(f"Total de registros encontrados: {len(filtered_data)}")
+
         if filtered_data:
             # Organizar os dados por ano
             df = pd.DataFrame(filtered_data)
